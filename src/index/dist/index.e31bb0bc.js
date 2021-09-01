@@ -132,17 +132,17 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var Paddle = /*#__PURE__*/function () {
-  function Paddle(gameHeight, GameWidth) {
+  function Paddle(game) {
     _classCallCheck(this, Paddle);
 
-    this.GameWidth = GameWidth;
+    this.gameWidth = game.gameWidth;
     this.width = 150;
     this.height = 30;
     this.maxSpeed = 7;
     this.speed = 0;
     this.position = {
-      x: GameWidth / 2 - this.width / 2,
-      y: gameHeight - this.height - 10
+      x: game.gameWidth / 2 - this.width / 2,
+      y: game.gameHeight - this.height - 10
     };
   }
 
@@ -172,7 +172,7 @@ var Paddle = /*#__PURE__*/function () {
     value: function update(deltaTime) {
       this.position.x += this.speed;
       if (this.position.x < 0) this.position.x = 0;
-      if (this.position.x + this.width > this.GameWidth) this.position.x = this.GameWidth - this.width;
+      if (this.position.x + this.width > this.gameWidth) this.position.x = this.gameWidth - this.width;
     }
   }]);
 
@@ -233,12 +233,12 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var Ball = /*#__PURE__*/function () {
-  function Ball(gameHeight, gameWidth) {
+  function Ball(game) {
     _classCallCheck(this, Ball);
 
     this.image = document.getElementById("img_ball");
-    this.gameWidth = gameWidth;
-    this.gameHeight = gameHeight;
+    this.gameWidth = game.gameWidth;
+    this.gameHeight = game.gameHeight;
     this.position = {
       x: 10,
       y: 10
@@ -275,8 +275,13 @@ var Ball = /*#__PURE__*/function () {
 }();
 
 exports.default = Ball;
-},{}],"index.js":[function(require,module,exports) {
+},{}],"../game/game.js":[function(require,module,exports) {
 "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
 var _paddle = _interopRequireDefault(require("./../game/paddle"));
 
@@ -286,28 +291,74 @@ var _ball = _interopRequireDefault(require("./../game/ball"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Game = /*#__PURE__*/function () {
+  function Game(gameWidth, gameHeight) {
+    _classCallCheck(this, Game);
+
+    this.gameWidth = gameWidth;
+    this.gameHeight = gameHeight;
+  }
+
+  _createClass(Game, [{
+    key: "start",
+    value: function start() {
+      this.paddle = new _paddle.default(this);
+      this.ball = new _ball.default(this);
+      this.gameObjects = [this.ball, this.paddle];
+      new _inputHandler.default(this.paddle);
+    }
+  }, {
+    key: "update",
+    value: function update(deltaTime) {
+      this.gameObjects.forEach(function (object) {
+        return object.update(deltaTime);
+      });
+    }
+  }, {
+    key: "draw",
+    value: function draw(ctx) {
+      this.gameObjects.forEach(function (object) {
+        return object.draw(ctx);
+      });
+    }
+  }]);
+
+  return Game;
+}();
+
+exports.default = Game;
+},{"./../game/paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./../game/ball":"../game/ball.js"}],"index.js":[function(require,module,exports) {
+"use strict";
+
+var _game = _interopRequireDefault(require("./../game/game"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var canvas = document.getElementById("gameScreen");
 var ctx = canvas.getContext('2d');
 var GAME_HEIGHT = 600;
 var GAME_WIDTH = 800;
-var paddle = new _paddle.default(GAME_HEIGHT, GAME_WIDTH);
-var ball = new _ball.default(GAME_HEIGHT, GAME_WIDTH);
-new _inputHandler.default(paddle);
+var game = new _game.default(GAME_WIDTH, GAME_HEIGHT);
+game.start();
 var lastTime = 0;
 
 function gameLoop(timestamp) {
   var deltaTime = timestamp - lastTime;
   lastTime = timestamp;
   ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-  paddle.draw(ctx);
-  paddle.update(deltaTime);
-  ball.draw(ctx);
-  ball.update(deltaTime);
+  game.update(deltaTime);
+  game.draw(ctx);
   requestAnimationFrame(gameLoop);
 }
 
 requestAnimationFrame(gameLoop);
-},{"./../game/paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./../game/ball":"../game/ball.js"}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./../game/game":"../game/game.js"}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -335,7 +386,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56967" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64290" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
