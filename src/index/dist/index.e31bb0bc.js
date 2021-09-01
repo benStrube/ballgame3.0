@@ -219,12 +219,49 @@ var InputHandler = function InputHandler(paddle) {
 };
 
 exports.default = InputHandler;
+},{}],"../game/ball.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Ball = /*#__PURE__*/function () {
+  function Ball() {
+    _classCallCheck(this, Ball);
+
+    this.image = document.getElementById("img_ball");
+  }
+
+  _createClass(Ball, [{
+    key: "draw",
+    value: function draw(ctx) {
+      ctx.drawImage(this.image, 10, 10, 35, 35);
+    }
+  }, {
+    key: "update",
+    value: function update() {}
+  }]);
+
+  return Ball;
+}();
+
+exports.default = Ball;
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _paddle = _interopRequireDefault(require("./../game/paddle"));
 
 var _inputHandler = _interopRequireDefault(require("./../eventHandlers/inputHandler"));
+
+var _ball = _interopRequireDefault(require("./../game/ball"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -233,6 +270,7 @@ var ctx = canvas.getContext('2d');
 var GAME_HEIGHT = 600;
 var GAME_WIDTH = 800;
 var paddle = new _paddle.default(GAME_HEIGHT, GAME_WIDTH);
+var ball = new _ball.default();
 new _inputHandler.default(paddle);
 var lastTime = 0;
 
@@ -242,11 +280,12 @@ function gameLoop(timestamp) {
   ctx.clearRect(0, 0, 800, 600);
   paddle.update(deltaTime);
   paddle.draw(ctx);
+  ball.draw(ctx);
   requestAnimationFrame(gameLoop);
 }
 
 gameLoop();
-},{"./../game/paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js"}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./../game/paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./../game/ball":"../game/ball.js"}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -274,7 +313,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62842" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63546" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

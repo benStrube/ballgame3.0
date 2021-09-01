@@ -1,1 +1,1 @@
-{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA;AACA;AACA","file":"index.9ad09f98.css","sourceRoot":"..","sourcesContent":["#gameScreen{\r\n    border: 1px solid black;\r\n}"]}
+{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA;AACA;AACA;AACA;AACA;AACA;AACA","file":"index.9ad09f98.css","sourceRoot":"..","sourcesContent":["#gameScreen{\r\n    border: 1px solid black;\r\n}\r\n\r\nimg {\r\n    display:none;\r\n}"]}
