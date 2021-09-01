@@ -259,7 +259,6 @@ var Ball = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update(deltaTime) {
-      console.log(this.game.paddle.position.x);
       this.position.x += this.speed.x;
       this.position.y += this.speed.y; //wall on left or right
 
@@ -289,6 +288,45 @@ var Ball = /*#__PURE__*/function () {
 }();
 
 exports.default = Ball;
+},{}],"../game/brick.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Brick = /*#__PURE__*/function () {
+  function Brick(game, position) {
+    _classCallCheck(this, Brick);
+
+    this.image = document.getElementById("img_brick");
+    this.game = game;
+    this.position = position;
+    this.width = 52;
+    this.height = 24;
+  }
+
+  _createClass(Brick, [{
+    key: "update",
+    value: function update() {}
+  }, {
+    key: "draw",
+    value: function draw(ctx) {
+      ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    }
+  }]);
+
+  return Brick;
+}();
+
+exports.default = Brick;
 },{}],"../game/game.js":[function(require,module,exports) {
 "use strict";
 
@@ -297,11 +335,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _paddle = _interopRequireDefault(require("./../game/paddle"));
+var _paddle = _interopRequireDefault(require("./paddle"));
 
 var _inputHandler = _interopRequireDefault(require("./../eventHandlers/inputHandler"));
 
-var _ball = _interopRequireDefault(require("./../game/ball"));
+var _ball = _interopRequireDefault(require("./ball"));
+
+var _brick = _interopRequireDefault(require("./brick"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -324,7 +364,16 @@ var Game = /*#__PURE__*/function () {
     value: function start() {
       this.paddle = new _paddle.default(this);
       this.ball = new _ball.default(this);
-      this.gameObjects = [this.ball, this.paddle];
+      var bricks = [];
+
+      for (var i = 0; i < 10; i++) {
+        bricks.push(new _brick.default(this, {
+          x: i * 52,
+          y: 30
+        }));
+      }
+
+      this.gameObjects = [this.ball, this.paddle].concat(bricks);
       new _inputHandler.default(this.paddle);
     }
   }, {
@@ -347,7 +396,7 @@ var Game = /*#__PURE__*/function () {
 }();
 
 exports.default = Game;
-},{"./../game/paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./../game/ball":"../game/ball.js"}],"index.js":[function(require,module,exports) {
+},{"./paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./ball":"../game/ball.js","./brick":"../game/brick.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _game = _interopRequireDefault(require("./../game/game"));
