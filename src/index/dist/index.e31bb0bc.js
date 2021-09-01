@@ -118,7 +118,11 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"index.js":[function(require,module,exports) {
-
+var canvas = document.getElementById("gameScreen");
+var ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, 800, 600);
+ctx.fillStyle = '#f00';
+ctx.fillRect(20, 20, 100, 100);
 },{}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
