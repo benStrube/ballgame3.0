@@ -146,8 +146,14 @@ var Paddle = /*#__PURE__*/function () {
   _createClass(Paddle, [{
     key: "draw",
     value: function draw(ctx) {
-      ctx.fillStyle = '#00f';
+      ctx.fillStyle = '#0ff';
       ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    }
+  }, {
+    key: "update",
+    value: function update(deltaTime) {
+      if (!deltaTime) return;
+      this.position.x += 5 / deltaTime;
     }
   }]);
 
@@ -166,9 +172,20 @@ var canvas = document.getElementById("gameScreen");
 var ctx = canvas.getContext('2d');
 var GAME_HEIGHT = 600;
 var GAME_WIDTH = 800;
-ctx.clearRect(0, 0, 800, 600);
 var paddle = new _paddle.default(GAME_HEIGHT, GAME_WIDTH);
 paddle.draw(ctx);
+var lastTime = 0;
+
+function gameLoop(timestamp) {
+  var deltaTime = timestamp - lastTime;
+  lastTime = timestamp;
+  ctx.clearRect(0, 0, 800, 600);
+  paddle.update(deltaTime);
+  paddle.draw(ctx);
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
 },{"./../game/paddle":"../game/paddle.js"}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
