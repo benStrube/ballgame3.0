@@ -170,7 +170,6 @@ var Paddle = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update(deltaTime) {
-      if (!deltaTime) return;
       this.position.x += this.speed;
       if (this.position.x < 0) this.position.x = 0;
       if (this.position.x + this.width > this.GameWidth) this.position.x = this.GameWidth - this.width;
@@ -234,20 +233,42 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var Ball = /*#__PURE__*/function () {
-  function Ball() {
+  function Ball(gameHeight, gameWidth) {
     _classCallCheck(this, Ball);
 
     this.image = document.getElementById("img_ball");
+    this.gameWidth = gameWidth;
+    this.gameHeight = gameHeight;
+    this.position = {
+      x: 10,
+      y: 10
+    };
+    this.speed = {
+      x: 4,
+      y: 2
+    };
+    this.size = 16;
   }
 
   _createClass(Ball, [{
     key: "draw",
     value: function draw(ctx) {
-      ctx.drawImage(this.image, 10, 10, 35, 35);
+      ctx.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
     }
   }, {
     key: "update",
-    value: function update() {}
+    value: function update(deltaTime) {
+      this.position.x += this.speed.x;
+      this.position.y += this.speed.y;
+
+      if (this.position.x + this.size > this.gameWidth || this.position.x < 0) {
+        this.speed.x = -this.speed.x;
+      }
+
+      if (this.position.y + this.size > this.gameHeight || this.position.y < 0) {
+        this.speed.y = -this.speed.y;
+      }
+    }
   }]);
 
   return Ball;
@@ -270,21 +291,22 @@ var ctx = canvas.getContext('2d');
 var GAME_HEIGHT = 600;
 var GAME_WIDTH = 800;
 var paddle = new _paddle.default(GAME_HEIGHT, GAME_WIDTH);
-var ball = new _ball.default();
+var ball = new _ball.default(GAME_HEIGHT, GAME_WIDTH);
 new _inputHandler.default(paddle);
 var lastTime = 0;
 
 function gameLoop(timestamp) {
   var deltaTime = timestamp - lastTime;
   lastTime = timestamp;
-  ctx.clearRect(0, 0, 800, 600);
-  paddle.update(deltaTime);
+  ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
   paddle.draw(ctx);
+  paddle.update(deltaTime);
   ball.draw(ctx);
+  ball.update(deltaTime);
   requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+requestAnimationFrame(gameLoop);
 },{"./../game/paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./../game/ball":"../game/ball.js"}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -313,7 +335,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63546" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56967" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
