@@ -309,7 +309,7 @@ var Brick = /*#__PURE__*/function () {
     this.image = document.getElementById("img_brick");
     this.game = game;
     this.position = position;
-    this.width = 52;
+    this.width = 80;
     this.height = 24;
   }
 
@@ -327,7 +327,38 @@ var Brick = /*#__PURE__*/function () {
 }();
 
 exports.default = Brick;
-},{}],"../game/game.js":[function(require,module,exports) {
+},{}],"../game/levels.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.buildLevel = buildLevel;
+exports.level1 = void 0;
+
+var _brick = _interopRequireDefault(require("./brick"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function buildLevel(game, level) {
+  var bricks = [];
+  level.forEach(function (row, rowIndex) {
+    row.forEach(function (brick, brickIndex) {
+      if (brick === 1) {
+        var position = {
+          x: 80 * brickIndex,
+          y: 75 + 24 * rowIndex
+        };
+        bricks.push(new _brick.default(game, position));
+      }
+    });
+  });
+  return bricks;
+}
+
+var level1 = [[0, 1, 1, 0, 0, 0, 0, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
+exports.level1 = level1;
+},{"./brick":"../game/brick.js"}],"../game/game.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -343,7 +374,21 @@ var _ball = _interopRequireDefault(require("./ball"));
 
 var _brick = _interopRequireDefault(require("./brick"));
 
+var _levels = require("./levels");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -364,16 +409,8 @@ var Game = /*#__PURE__*/function () {
     value: function start() {
       this.paddle = new _paddle.default(this);
       this.ball = new _ball.default(this);
-      var bricks = [];
-
-      for (var i = 0; i < 10; i++) {
-        bricks.push(new _brick.default(this, {
-          x: i * 52,
-          y: 30
-        }));
-      }
-
-      this.gameObjects = [this.ball, this.paddle].concat(bricks);
+      var bricks = (0, _levels.buildLevel)(this, _levels.level1);
+      this.gameObjects = [this.ball, this.paddle].concat(_toConsumableArray(bricks));
       new _inputHandler.default(this.paddle);
     }
   }, {
@@ -396,7 +433,7 @@ var Game = /*#__PURE__*/function () {
 }();
 
 exports.default = Game;
-},{"./paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./ball":"../game/ball.js","./brick":"../game/brick.js"}],"index.js":[function(require,module,exports) {
+},{"./paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./ball":"../game/ball.js","./brick":"../game/brick.js","./levels":"../game/levels.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _game = _interopRequireDefault(require("./../game/game"));
