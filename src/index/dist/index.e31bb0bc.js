@@ -157,6 +157,11 @@ var Paddle = /*#__PURE__*/function () {
       this.speed = this.maxSpeed;
     }
   }, {
+    key: "stop",
+    value: function stop() {
+      this.speed = 0;
+    }
+  }, {
     key: "draw",
     value: function draw(ctx) {
       ctx.fillStyle = '#0ff';
@@ -197,6 +202,17 @@ var InputHandler = function InputHandler(paddle) {
 
       case 39:
         paddle.moveRight();
+        break;
+    }
+  });
+  document.addEventListener('keyup', function (event) {
+    switch (event.keyCode) {
+      case 37:
+        if (paddle.speed < 0) paddle.stop();
+        break;
+
+      case 39:
+        if (paddle.speed > 0) paddle.stop();
         break;
     }
   });

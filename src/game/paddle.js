@@ -20,6 +20,10 @@ export default class Paddle {
     moveRight(){
         this.speed = this.maxSpeed;
     }
+
+    stop(){
+        this.speed = 0;
+    }
     
     draw(ctx){
         ctx.fillStyle = '#0ff';
