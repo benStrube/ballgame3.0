@@ -161,10 +161,39 @@ var Paddle = /*#__PURE__*/function () {
 }();
 
 exports.default = Paddle;
+},{}],"../eventHandlers/inputHandler.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var InputHandler = function InputHandler() {
+  _classCallCheck(this, InputHandler);
+
+  document.addEventListener('keydown', function (event) {
+    switch (event.keyCode) {
+      case 37:
+        alert("move left");
+        break;
+
+      case 39:
+        alert("move right");
+        break;
+    }
+  });
+};
+
+exports.default = InputHandler;
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _paddle = _interopRequireDefault(require("./../game/paddle"));
+
+var _inputHandler = _interopRequireDefault(require("./../eventHandlers/inputHandler"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -173,7 +202,7 @@ var ctx = canvas.getContext('2d');
 var GAME_HEIGHT = 600;
 var GAME_WIDTH = 800;
 var paddle = new _paddle.default(GAME_HEIGHT, GAME_WIDTH);
-paddle.draw(ctx);
+new _inputHandler.default();
 var lastTime = 0;
 
 function gameLoop(timestamp) {
@@ -186,7 +215,7 @@ function gameLoop(timestamp) {
 }
 
 gameLoop();
-},{"./../game/paddle":"../game/paddle.js"}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./../game/paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js"}],"../../../../../Users/bstrube/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
