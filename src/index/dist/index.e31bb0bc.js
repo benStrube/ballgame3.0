@@ -135,8 +135,11 @@ var Paddle = /*#__PURE__*/function () {
   function Paddle(gameHeight, GameWidth) {
     _classCallCheck(this, Paddle);
 
+    this.GameWidth = GameWidth;
     this.width = 150;
     this.height = 30;
+    this.maxSpeed = 7;
+    this.speed = 0;
     this.position = {
       x: GameWidth / 2 - this.width / 2,
       y: gameHeight - this.height - 10
@@ -144,6 +147,16 @@ var Paddle = /*#__PURE__*/function () {
   }
 
   _createClass(Paddle, [{
+    key: "moveLeft",
+    value: function moveLeft() {
+      this.speed = -this.maxSpeed;
+    }
+  }, {
+    key: "moveRight",
+    value: function moveRight() {
+      this.speed = this.maxSpeed;
+    }
+  }, {
     key: "draw",
     value: function draw(ctx) {
       ctx.fillStyle = '#0ff';
@@ -153,7 +166,9 @@ var Paddle = /*#__PURE__*/function () {
     key: "update",
     value: function update(deltaTime) {
       if (!deltaTime) return;
-      this.position.x += 5 / deltaTime;
+      this.position.x += this.speed;
+      if (this.position.x < 0) this.position.x = 0;
+      if (this.position.x + this.width > this.GameWidth) this.position.x = this.GameWidth - this.width;
     }
   }]);
 
@@ -171,17 +186,17 @@ exports.default = void 0;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var InputHandler = function InputHandler() {
+var InputHandler = function InputHandler(paddle) {
   _classCallCheck(this, InputHandler);
 
   document.addEventListener('keydown', function (event) {
     switch (event.keyCode) {
       case 37:
-        alert("move left");
+        paddle.moveLeft();
         break;
 
       case 39:
-        alert("move right");
+        paddle.moveRight();
         break;
     }
   });
@@ -202,7 +217,7 @@ var ctx = canvas.getContext('2d');
 var GAME_HEIGHT = 600;
 var GAME_WIDTH = 800;
 var paddle = new _paddle.default(GAME_HEIGHT, GAME_WIDTH);
-new _inputHandler.default();
+new _inputHandler.default(paddle);
 var lastTime = 0;
 
 function gameLoop(timestamp) {
@@ -243,7 +258,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56732" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62842" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

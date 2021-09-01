@@ -9,7 +9,7 @@ const GAME_WIDTH = 800;
 
 let paddle = new Paddle(GAME_HEIGHT,GAME_WIDTH);
 
-new InputHandler();
+new InputHandler(paddle);
 
 let lastTime = 0;
 
