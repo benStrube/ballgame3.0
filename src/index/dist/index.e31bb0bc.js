@@ -218,6 +218,28 @@ var InputHandler = function InputHandler(paddle) {
 };
 
 exports.default = InputHandler;
+},{}],"../eventHandlers/collisionDetection.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.collisionDetection = collisionDetection;
+
+function collisionDetection(ball, gameObject) {
+  var bottomOfBall = ball.position.y + ball.size;
+  var topOfBall = ball.position.y;
+  var topOfObject = gameObject.position.y;
+  var leftSideOfObject = gameObject.position.x;
+  var rightSideOfObject = gameObject.position.x + gameObject.width;
+  var bottomOfObject = gameObject.position.y + gameObject.height;
+
+  if (bottomOfBall >= topOfObject && topOfBall <= bottomOfObject && ball.position.x >= leftSideOfObject && ball.position.x + ball.size <= rightSideOfObject) {
+    return true;
+  } else {
+    return false;
+  }
+}
 },{}],"../game/ball.js":[function(require,module,exports) {
 "use strict";
 
@@ -225,6 +247,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+var _collisionDetection = require("../eventHandlers/collisionDetection");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -269,15 +293,9 @@ var Ball = /*#__PURE__*/function () {
 
       if (this.position.y + this.size > this.gameHeight || this.position.y < 0) {
         this.speed.y = -this.speed.y;
-      } //check collision with paddle
+      }
 
-
-      var bottomOfBall = this.position.y + this.size;
-      var topOfPaddle = this.game.paddle.position.y;
-      var leftSideOfPadle = this.game.paddle.position.x;
-      var rightSideOfPaddle = this.game.paddle.position.x + this.game.paddle.gameWidth;
-
-      if (bottomOfBall >= topOfPaddle && this.position.x >= leftSideOfPadle && this.position.x + this.size <= rightSideOfPaddle) {
+      if ((0, _collisionDetection.collisionDetection)(this, this.game.paddle)) {
         this.speed.y = -this.speed.y;
         this.position.y = this.game.paddle.position.y - this.size;
       }
@@ -288,13 +306,15 @@ var Ball = /*#__PURE__*/function () {
 }();
 
 exports.default = Ball;
-},{}],"../game/brick.js":[function(require,module,exports) {
+},{"../eventHandlers/collisionDetection":"../eventHandlers/collisionDetection.js"}],"../game/brick.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+var _collisionDetection = require("../eventHandlers/collisionDetection");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -311,11 +331,17 @@ var Brick = /*#__PURE__*/function () {
     this.position = position;
     this.width = 80;
     this.height = 24;
+    this.markedForDeletion = false;
   }
 
   _createClass(Brick, [{
     key: "update",
-    value: function update() {}
+    value: function update() {
+      if ((0, _collisionDetection.collisionDetection)(this.game.ball, this)) {
+        this.game.ball.speed.y = -this.game.ball.speed.y;
+        this.markedForDeletion = true;
+      }
+    }
   }, {
     key: "draw",
     value: function draw(ctx) {
@@ -327,7 +353,7 @@ var Brick = /*#__PURE__*/function () {
 }();
 
 exports.default = Brick;
-},{}],"../game/levels.js":[function(require,module,exports) {
+},{"../eventHandlers/collisionDetection":"../eventHandlers/collisionDetection.js"}],"../game/levels.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -419,6 +445,9 @@ var Game = /*#__PURE__*/function () {
       this.gameObjects.forEach(function (object) {
         return object.update(deltaTime);
       });
+      this.gameObjects = this.gameObjects.filter(function (object) {
+        return !object.markedForDeletion;
+      });
     }
   }, {
     key: "draw",
@@ -486,7 +515,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64290" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58058" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
