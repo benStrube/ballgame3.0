@@ -205,6 +205,11 @@ var InputHandler = function InputHandler(paddle, game) {
 
       case 27:
         game.togglePause();
+        break;
+
+      case 32:
+        game.start();
+        break;
     }
   });
   document.addEventListener('keyup', function (event) {
@@ -436,22 +441,25 @@ var Game = /*#__PURE__*/function () {
 
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
+    this.gamestate = GAMESTATE.MENU;
+    this.paddle = new _paddle.default(this);
+    this.ball = new _ball.default(this);
+    this.gameObjects = [];
+    new _inputHandler.default(this.paddle, this);
   }
 
   _createClass(Game, [{
     key: "start",
     value: function start() {
-      this.gamestate = GAMESTATE.RUNNING;
-      this.paddle = new _paddle.default(this);
-      this.ball = new _ball.default(this);
+      if (this.gamestate !== GAMESTATE.MENU) return;
       var bricks = (0, _levels.buildLevel)(this, _levels.level1);
       this.gameObjects = [this.ball, this.paddle].concat(_toConsumableArray(bricks));
-      new _inputHandler.default(this.paddle, this);
+      this.gamestate = GAMESTATE.RUNNING;
     }
   }, {
     key: "update",
     value: function update(deltaTime) {
-      if (this.gamestate == GAMESTATE.PAUSED) return;
+      if (this.gamestate === GAMESTATE.PAUSED || this.gamestate === GAMESTATE.MENU) return;
       this.gameObjects.forEach(function (object) {
         return object.update(deltaTime);
       });
@@ -466,7 +474,7 @@ var Game = /*#__PURE__*/function () {
         return object.draw(ctx);
       });
 
-      if (this.gamestate == GAMESTATE.PAUSED) {
+      if (this.gamestate === GAMESTATE.PAUSED) {
         ctx.rect(0, 0, this.gameWidth, this.gameHeight);
         ctx.fillStyle = "rgba(0,0,0,0.5)";
         ctx.fill();
@@ -474,6 +482,16 @@ var Game = /*#__PURE__*/function () {
         ctx.fillStyle = "white";
         ctx.textAlign = "center";
         ctx.fillText("Paused", this.gameWidth / 2, this.gameHeight / 2);
+      }
+
+      if (this.gamestate === GAMESTATE.MENU) {
+        ctx.rect(0, 0, this.gameWidth, this.gameHeight);
+        ctx.fillStyle = "rgba(0,0,0,1)";
+        ctx.fill();
+        ctx.font = "30px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("Press SPACEBAR to Start", this.gameWidth / 2, this.gameHeight / 2);
       }
     }
   }, {
@@ -503,7 +521,6 @@ var ctx = canvas.getContext('2d');
 var GAME_HEIGHT = 600;
 var GAME_WIDTH = 800;
 var game = new _game.default(GAME_WIDTH, GAME_HEIGHT);
-game.start();
 var lastTime = 0;
 
 function gameLoop(timestamp) {
