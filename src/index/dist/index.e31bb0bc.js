@@ -379,7 +379,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.buildLevel = buildLevel;
-exports.level1 = void 0;
+exports.level2 = exports.level1 = exports.level0 = void 0;
 
 var _brick = _interopRequireDefault(require("./brick"));
 
@@ -401,8 +401,12 @@ function buildLevel(game, level) {
   return bricks;
 }
 
+var level0 = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0]];
+exports.level0 = level0;
 var level1 = [[0, 1, 1, 0, 0, 0, 0, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
 exports.level1 = level1;
+var level2 = [[0, 1, 1, 0, 0, 0, 0, 1, 1, 0], [1, 1, 1, 0, 1, 1, 0, 1, 1, 1], [1, 1, 1, 0, 1, 1, 0, 1, 1, 1], [1, 1, 1, 0, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
+exports.level2 = level2;
 },{"./brick":"../game/brick.js"}],"../game/game.js":[function(require,module,exports) {
 "use strict";
 
@@ -443,7 +447,8 @@ var GAMESTATE = {
   PAUSED: 0,
   RUNNING: 1,
   MENU: 2,
-  GAMEOVER: 3
+  GAMEOVER: 3,
+  NEWLEVEL: 4
 };
 
 var Game = /*#__PURE__*/function () {
@@ -456,16 +461,20 @@ var Game = /*#__PURE__*/function () {
     this.paddle = new _paddle.default(this);
     this.ball = new _ball.default(this);
     this.gameObjects = [];
+    this.bricks = [];
     this.lives = 3;
+    this.levels = [_levels.level0, _levels.level1, _levels.level2];
+    this.currentLevel = 0;
     new _inputHandler.default(this.paddle, this);
   }
 
   _createClass(Game, [{
     key: "start",
     value: function start() {
-      if (this.gamestate !== GAMESTATE.MENU) return;
-      var bricks = (0, _levels.buildLevel)(this, _levels.level1);
-      this.gameObjects = [this.ball, this.paddle].concat(_toConsumableArray(bricks));
+      if (this.gamestate !== GAMESTATE.MENU && this.gamestate !== GAMESTATE.NEWLEVEL) return;
+      this.bricks = (0, _levels.buildLevel)(this, this.levels[this.currentLevel]);
+      this.ball.reset();
+      this.gameObjects = [this.ball, this.paddle];
       this.gamestate = GAMESTATE.RUNNING;
     }
   }, {
@@ -473,17 +482,24 @@ var Game = /*#__PURE__*/function () {
     value: function update(deltaTime) {
       if (this.lives === 0) this.gamestate = GAMESTATE.GAMEOVER;
       if (this.gamestate === GAMESTATE.PAUSED || this.gamestate === GAMESTATE.MENU || this.gamestate === GAMESTATE.GAMEOVER) return;
-      this.gameObjects.forEach(function (object) {
+
+      if (this.bricks.length === 0) {
+        this.currentLevel++;
+        this.gamestate = GAMESTATE.NEWLEVEL;
+        this.start();
+      }
+
+      [].concat(_toConsumableArray(this.gameObjects), _toConsumableArray(this.bricks)).forEach(function (object) {
         return object.update(deltaTime);
       });
-      this.gameObjects = this.gameObjects.filter(function (object) {
-        return !object.markedForDeletion;
+      this.bricks = this.bricks.filter(function (brick) {
+        return !brick.markedForDeletion;
       });
     }
   }, {
     key: "draw",
     value: function draw(ctx) {
-      this.gameObjects.forEach(function (object) {
+      [].concat(_toConsumableArray(this.gameObjects), _toConsumableArray(this.bricks)).forEach(function (object) {
         return object.draw(ctx);
       });
 
