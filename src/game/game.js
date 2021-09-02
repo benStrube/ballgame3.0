@@ -18,6 +18,7 @@ export default class Game {
         this.paddle = new Paddle(this);
         this.ball = new Ball(this);
         this.gameObjects = [];
+        this.lives = 3;
         new InputHandler(this.paddle, this);
     }
 
@@ -29,7 +30,13 @@ export default class Game {
     }
 
     update(deltaTime){
-        if(this.gamestate === GAMESTATE.PAUSED || this.gamestate === GAMESTATE.MENU) return;
+        if(this.lives === 0) this.gamestate = GAMESTATE.GAMEOVER;
+        if(
+            this.gamestate === GAMESTATE.PAUSED || 
+            this.gamestate === GAMESTATE.MENU ||
+            this.gamestate === GAMESTATE.GAMEOVER
+        ) 
+            return;
         this.gameObjects.forEach(object => object.update(deltaTime));
         this.gameObjects = this.gameObjects.filter(object => !object.markedForDeletion);
     }
@@ -55,6 +62,15 @@ export default class Game {
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
             ctx.fillText("Press SPACEBAR to Start",this.gameWidth / 2, this.gameHeight / 2)
+        }
+        if(this.gamestate === GAMESTATE.GAMEOVER) {
+            ctx.rect(0,0,this.gameWidth,this.gameHeight);
+            ctx.fillStyle = "rgba(0,0,0,1)";
+            ctx.fill();
+            ctx.font = "30px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.fillText("GAME OVER",this.gameWidth / 2, this.gameHeight / 2)
         }
     }
 

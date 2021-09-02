@@ -272,18 +272,23 @@ var Ball = /*#__PURE__*/function () {
     this.gameWidth = game.gameWidth;
     this.gameHeight = game.gameHeight;
     this.game = game;
-    this.position = {
-      x: 10,
-      y: 400
-    };
-    this.speed = {
-      x: 4,
-      y: -2
-    };
     this.size = 16;
+    this.reset();
   }
 
   _createClass(Ball, [{
+    key: "reset",
+    value: function reset() {
+      this.position = {
+        x: 10,
+        y: 400
+      };
+      this.speed = {
+        x: 4,
+        y: -2
+      };
+    }
+  }, {
     key: "draw",
     value: function draw(ctx) {
       ctx.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
@@ -296,11 +301,17 @@ var Ball = /*#__PURE__*/function () {
 
       if (this.position.x + this.size > this.gameWidth || this.position.x < 0) {
         this.speed.x = -this.speed.x;
-      } //wall on top or bottom
+      } //wall on top
 
 
-      if (this.position.y + this.size > this.gameHeight || this.position.y < 0) {
+      if (this.position.y < 0) {
         this.speed.y = -this.speed.y;
+      } //wall on bottom
+
+
+      if (this.position.y + this.size > this.gameHeight) {
+        this.game.lives--;
+        this.reset();
       }
 
       if ((0, _collisionDetection.collisionDetection)(this, this.game.paddle)) {
@@ -445,6 +456,7 @@ var Game = /*#__PURE__*/function () {
     this.paddle = new _paddle.default(this);
     this.ball = new _ball.default(this);
     this.gameObjects = [];
+    this.lives = 3;
     new _inputHandler.default(this.paddle, this);
   }
 
@@ -459,7 +471,8 @@ var Game = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update(deltaTime) {
-      if (this.gamestate === GAMESTATE.PAUSED || this.gamestate === GAMESTATE.MENU) return;
+      if (this.lives === 0) this.gamestate = GAMESTATE.GAMEOVER;
+      if (this.gamestate === GAMESTATE.PAUSED || this.gamestate === GAMESTATE.MENU || this.gamestate === GAMESTATE.GAMEOVER) return;
       this.gameObjects.forEach(function (object) {
         return object.update(deltaTime);
       });
@@ -492,6 +505,16 @@ var Game = /*#__PURE__*/function () {
         ctx.fillStyle = "white";
         ctx.textAlign = "center";
         ctx.fillText("Press SPACEBAR to Start", this.gameWidth / 2, this.gameHeight / 2);
+      }
+
+      if (this.gamestate === GAMESTATE.GAMEOVER) {
+        ctx.rect(0, 0, this.gameWidth, this.gameHeight);
+        ctx.fillStyle = "rgba(0,0,0,1)";
+        ctx.fill();
+        ctx.font = "30px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", this.gameWidth / 2, this.gameHeight / 2);
       }
     }
   }, {
