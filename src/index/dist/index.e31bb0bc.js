@@ -190,7 +190,7 @@ exports.default = void 0;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var InputHandler = function InputHandler(paddle) {
+var InputHandler = function InputHandler(paddle, game) {
   _classCallCheck(this, InputHandler);
 
   document.addEventListener('keydown', function (event) {
@@ -202,6 +202,9 @@ var InputHandler = function InputHandler(paddle) {
       case 39:
         paddle.moveRight();
         break;
+
+      case 27:
+        game.togglePause();
     }
   });
   document.addEventListener('keyup', function (event) {
@@ -266,11 +269,11 @@ var Ball = /*#__PURE__*/function () {
     this.game = game;
     this.position = {
       x: 10,
-      y: 10
+      y: 400
     };
     this.speed = {
       x: 4,
-      y: 2
+      y: -2
     };
     this.size = 16;
   }
@@ -398,8 +401,6 @@ var _inputHandler = _interopRequireDefault(require("./../eventHandlers/inputHand
 
 var _ball = _interopRequireDefault(require("./ball"));
 
-var _brick = _interopRequireDefault(require("./brick"));
-
 var _levels = require("./levels");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -422,6 +423,13 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+var GAMESTATE = {
+  PAUSED: 0,
+  RUNNING: 1,
+  MENU: 2,
+  GAMEOVER: 3
+};
+
 var Game = /*#__PURE__*/function () {
   function Game(gameWidth, gameHeight) {
     _classCallCheck(this, Game);
@@ -433,15 +441,17 @@ var Game = /*#__PURE__*/function () {
   _createClass(Game, [{
     key: "start",
     value: function start() {
+      this.gamestate = GAMESTATE.RUNNING;
       this.paddle = new _paddle.default(this);
       this.ball = new _ball.default(this);
       var bricks = (0, _levels.buildLevel)(this, _levels.level1);
       this.gameObjects = [this.ball, this.paddle].concat(_toConsumableArray(bricks));
-      new _inputHandler.default(this.paddle);
+      new _inputHandler.default(this.paddle, this);
     }
   }, {
     key: "update",
     value: function update(deltaTime) {
+      if (this.gamestate == GAMESTATE.PAUSED) return;
       this.gameObjects.forEach(function (object) {
         return object.update(deltaTime);
       });
@@ -455,6 +465,25 @@ var Game = /*#__PURE__*/function () {
       this.gameObjects.forEach(function (object) {
         return object.draw(ctx);
       });
+
+      if (this.gamestate == GAMESTATE.PAUSED) {
+        ctx.rect(0, 0, this.gameWidth, this.gameHeight);
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fill();
+        ctx.font = "30px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("Paused", this.gameWidth / 2, this.gameHeight / 2);
+      }
+    }
+  }, {
+    key: "togglePause",
+    value: function togglePause() {
+      if (this.gamestate == GAMESTATE.PAUSED) {
+        this.gamestate = GAMESTATE.RUNNING;
+      } else {
+        this.gamestate = GAMESTATE.PAUSED;
+      }
     }
   }]);
 
@@ -462,7 +491,7 @@ var Game = /*#__PURE__*/function () {
 }();
 
 exports.default = Game;
-},{"./paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./ball":"../game/ball.js","./brick":"../game/brick.js","./levels":"../game/levels.js"}],"index.js":[function(require,module,exports) {
+},{"./paddle":"../game/paddle.js","./../eventHandlers/inputHandler":"../eventHandlers/inputHandler.js","./ball":"../game/ball.js","./levels":"../game/levels.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _game = _interopRequireDefault(require("./../game/game"));
